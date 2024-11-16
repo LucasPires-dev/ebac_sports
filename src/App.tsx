@@ -6,10 +6,11 @@ import { GlobalStyle } from './styles'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { store, RootReducer } from './store'
 import { adicionar as addCarrinho } from './store/reducers/carrinho'
-import {
-  adicionar as addAosFavoritos,
-  remover as removerAosFavoritos
-} from './store/reducers/favoritos'
+// import {
+//   adicionar as addAosFavoritos,
+//   remover as removerAosFavoritos
+// } from './store/reducers/favoritos'
+import { favoritar as favoritarProduto } from './store/reducers/favoritos'
 
 export type Produto = {
   id: number
@@ -19,14 +20,9 @@ export type Produto = {
 }
 
 function App() {
-  const { favoritos } = useSelector((state: RootReducer) => state)
-  const [produtos, setProdutos] = useState<Produto[]>([])
-
-  useEffect(() => {
-    fetch('https://fake-api-tau.vercel.app/api/ebac_sports')
-      .then((res) => res.json())
-      .then((res) => setProdutos(res))
-  }, [])
+  const { itens: favoritos } = useSelector(
+    (state: RootReducer) => state.favoritos
+  )
 
   const dispatch = useDispatch()
 
@@ -35,14 +31,7 @@ function App() {
   }
 
   function favoritar(produto: Produto): void {
-    console.log(favoritos)
-
-    if (favoritos.find((favorito: Produto) => favorito.id === produto.id)) {
-      dispatch(removerAosFavoritos(produto))
-    } else {
-      dispatch(addAosFavoritos(produto))
-    }
-    // dispatch(addAosFavoritos(produto))
+    dispatch(favoritarProduto(produto))
   }
 
   return (
@@ -51,7 +40,6 @@ function App() {
       <div className="container">
         <Header />
         <Produtos
-          produtos={produtos}
           favoritos={favoritos}
           favoritar={favoritar}
           adicionarAoCarrinho={adicionarAoCarrinho}
